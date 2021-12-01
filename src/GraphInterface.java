@@ -6,6 +6,11 @@
  * @author Mamadou
  *
  */
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 public interface GraphInterface {
 		public Set<Edge> edges();
 		
@@ -53,7 +58,7 @@ public interface GraphInterface {
 		
 		public Graph edmondsKarp(Integer nodeU, Integer nodeV);
 
-		public Solution makePath(Map<Integer, Edge> in, Integer nodeU, Integer nodeV);
+		public Result makePath(Map<Integer, Edge> in, Integer nodeU, Integer nodeV);
 
-		public Solution minimumCut(Integer nodeU);
+		public Result minimumCut(Integer nodeU);
 }
