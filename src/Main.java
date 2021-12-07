@@ -54,10 +54,10 @@ public class Main {
 			for (int i = 0; i < n - 1; i++)
 				for (int j = 0; j < m; j++) {
 					int c = scanner.nextInt();
-					int lNode = i * m + j;
-					int rNode = lNode + m;
-					r.addEdge(lNode, rNode, c);
-					r.addEdge(rNode, lNode, c);
+					int tNode = i * m + j;
+					int bNode = tNode + m;
+					r.addEdge(tNode, bNode, c);
+					r.addEdge(bNode, tNode, c);
 					System.out.println(c);
 				}
 		}
