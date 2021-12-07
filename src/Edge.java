@@ -7,23 +7,22 @@
  *
  */
 public class Edge {
-	private Integer source, destination;
+	private Integer destination;
 	private Integer flow, capacity;
 	
-	public Edge(Integer nodeU, Integer nodeV)
+	public Edge(Integer nodeV)
 	{
-		this.source = nodeU;
 		this.destination = nodeV;
 	}
 	
-	public Edge(Integer nodeU, Integer nodeV, Integer capacity)
+	public Edge(Integer nodeV, Integer capacity)
 	{
-		this(nodeU, nodeV, 0, capacity);
+		this(nodeV, 0, capacity);
 	}
 	
-	public Edge(Integer nodeU, Integer nodeV, Integer flow, Integer capacity)
+	public Edge(Integer nodeV, Integer flow, Integer capacity)
 	{
-		this(nodeU, nodeV);
+		this(nodeV);
 		if( flow > capacity )
 		{
 			throw new IllegalArgumentException("Flow can not exceed capacity");
@@ -34,17 +33,11 @@ public class Edge {
 	
 	public Edge(Edge e)
 	{
-		this.source = e.source;
 		this.destination = e.destination;
 		this.flow = e.flow;
 		this.capacity = e.capacity;
 	}
-	
-	public Integer source()
-	{
-		return this.source;
-	}
-	
+
 	public Integer destination()
 	{
 		return this.destination;
@@ -83,7 +76,7 @@ public class Edge {
 	{
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("(" + source + ", " + destination);
+		sb.append("(edge to " + destination);
 		if( this.flow != null )
 		{
 			sb.append(", " + this.flow);
@@ -97,33 +90,6 @@ public class Edge {
 		return sb.toString();
 	}
 	
-	public Edge reverse()
-	{
-		Integer temp = this.source;
-		this.source = this.destination;
-		this.destination = temp;
-		
-		return this;
-	}
-	
-	@Override
-	public boolean equals(Object o)
-	{
-		if( o == this )
-		{
-			return true;
-		}
-		
-		if( !( o instanceof Edge ) )
-		{
-			return false;
-		}
-		
-		Edge e = (Edge) o;
-		
-		return e.source().equals(this.source) && e.destination().equals(this.destination);
-	}
-	
 	/*
 	 * useful so as to not add the same edge twice even if the edge has different weights
 	 */
@@ -132,7 +98,7 @@ public class Edge {
 	{
 		int result = 0;
 		
-		result = this.source.hashCode() * this.destination.hashCode();
+		result = this.destination.hashCode();
 		
 		return result;
 	}

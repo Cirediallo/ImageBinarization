@@ -3,10 +3,6 @@ import java.util.Set;
 import java.util.*;
 
 /**
- * 
- */
-
-/**
  * @author Mamadou
  *
  */
@@ -14,7 +10,7 @@ import java.util.*;
 
 public /* abstract */ class Graph /* implements GraphInterface */ {
 	protected Set<Integer> nodes;
-	protected Set<Edge> edges;
+	protected ArrayList<Set<Edge>> edges;
 	
 	protected Boolean directed;
 	protected Boolean weighted;
@@ -36,10 +32,14 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 		this.nodes = new HashSet<Integer>();
 		for( int i = 0; i < n; ++i )
 		{
-			this.nodes.add((i + 1));
+			this.nodes.add((i));
 		}
 		
-		this.edges = new HashSet<Edge>();
+		this.edges = new ArrayList<Set<Edge>>(nodes.size());
+		for ( Integer _ : nodes )
+		{
+			edges.add(new HashSet<Edge>());
+		}
 		
 		this.directed = this.weighted = false;
 		
@@ -69,14 +69,17 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 		return copy;
 	}
 
-	public Set<Edge> edges()
+	public ArrayList<Set<Edge>> edges()
 	{
-		Set<Edge> copy = new HashSet<Edge>();
-		for ( Edge e : edges )
+		ArrayList<Set<Edge>> copyList = new ArrayList<Set<Edge>>(edges.size());
+		for ( Set<Edge> s : edges )
 		{
-			copy.add(new Edge(e.source(), e.destination(), e.flow(), e.capacity()));
+			Set<Edge> copySet = new HashSet<Edge>(s.size());
+			for ( Edge e : s )
+				copySet.add(new Edge(e.destination(), e.flow(), e.capacity()));
+			copyList.add(copySet);
 		}
-		return copy;
+		return copyList;
 	}
 
 	public Graph addNode(Integer node)
@@ -91,27 +94,21 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 		return this;
 	}
 
-	public Graph addEdge(Edge e)
-	{
-		edges.add(e);
-		return this;
-	}
-
 	public Graph addEdge(Integer nodeU, Integer nodeV)
 	{
-		edges.add(new Edge(nodeU, nodeV));
+		edges.get(nodeU).add(new Edge(nodeV));
 		return this;
 	}
 
 	public Graph addEdge(Integer nodeU, Integer nodeV, Integer capacity)
 	{
-		edges.add(new Edge(nodeU, nodeV, capacity));
+		edges.get(nodeU).add(new Edge(nodeV, capacity));
 		return this;
 	}
 
 	public Graph addEdge(Integer nodeU, Integer nodeV, Integer flow, Integer capacity)
 	{
-		edges.add(new Edge(nodeU, nodeV, flow, capacity));
+		edges.get(nodeU).add(new Edge(nodeV, flow, capacity));
 		return this;
 	}
 	
@@ -123,8 +120,8 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 	
 	public Graph removeEdge(Integer nodeU, Integer nodeV)
 	{
-		for ( Edge e : edges )
-			if ( e.source() == nodeU && e.destination() == nodeV )
+		for ( Edge e : edges.get(nodeU) )
+			if ( e.destination() == nodeV )
 			{
 				edges.remove(e);
 			}
@@ -135,16 +132,11 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 	{
 		return nodes.iterator();
 	}
-		
-	public Iterator<Edge> edgeIterator()
-	{
-		return edges.iterator();
-	}
 	
 	public Edge getEdge(Integer nodeU, Integer nodeV)
 	{
-		for ( Edge e : edges )
-			if ( e.source() == nodeU && e.destination() == nodeV )
+		for ( Edge e : edges.get(nodeU) )
+			if ( e.destination() == nodeV )
 				return e;
 		return null;
 	}
@@ -163,5 +155,4 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 	{
 		return this.maxflow;
 	}
-
 }

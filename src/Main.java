@@ -15,29 +15,25 @@ import java.util.Scanner;
  *
  */
 public class Main {
-	private static Graph r; // Our transportation network
-
-	private static void constructionReseau(String inputFileName) throws IOException {
-		Integer n, m, s, t;
+	private static Network constructionReseau(String inputFileName) throws IOException {
+		Integer n, m;
+		Network r;
 		try (Scanner scanner = new Scanner(Files.newInputStream(new File(inputFileName).toPath()))) {
 			n = scanner.nextInt(); // Height
 			m = scanner.nextInt(); // Width
 			int length = n * m; // Number of pixels
 
-			r = new Graph(length + 2);
+			r = new Network(length);
 			// Each pixel (i, j) has number i·m + j from 0 to n·m.
-
-			s = n * m; // Source node
-			t = n * m + 1; // Sink node
 
 			// aᵢ
 			for (int i = 0; i < length; i++) {
-				r.addEdge(s, i, scanner.nextInt());
+				r.addEdge(r.source(), i, scanner.nextInt());
 			}
 
 			// bᵢ
 			for (int i = 0; i < length; i++) {
-				r.addEdge(i, t, scanner.nextInt());
+				r.addEdge(i, r.sink(), scanner.nextInt());
 			}
 
 			// p horizontally
@@ -61,6 +57,14 @@ public class Main {
 					System.out.println(c);
 				}
 		}
+		return r;
+	}
+
+	private static int calculFlotMax(Network r) {
+		int maxFlow = 0;
+		Network residualNetwork = new Network(r);
+		System.out.println(r.path());
+		return 0;
 	}
 
 	/**
@@ -72,6 +76,7 @@ public class Main {
 		Reader isr = new InputStreamReader(System.in);
 		br = new BufferedReader(isr);
 		String inputFileName = br.readLine();
-		constructionReseau(inputFileName);
+		Network r = constructionReseau(inputFileName);
+		int maxFlow = calculFlotMax(r);
 	}
 }
