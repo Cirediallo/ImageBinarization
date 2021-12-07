@@ -12,7 +12,7 @@ import java.util.*;
  */
 
 
-public abstract class Graph implements GraphInterface {
+public /* abstract */ class Graph /* implements GraphInterface */ {
 	protected Set<Integer> nodes;
 	protected Set<Edge> edges;
 	
