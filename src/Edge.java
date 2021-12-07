@@ -79,11 +79,11 @@ public class Edge {
 		sb.append("(edge to " + destination);
 		if( this.flow != null )
 		{
-			sb.append(", " + this.flow);
+			sb.append(", flow: " + this.flow);
 		}
 		if( this.capacity != null )
 		{
-			sb.append(", " + this.capacity);
+			sb.append(", capacity: " + this.capacity);
 		}
 		sb.append(")");
 		

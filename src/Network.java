@@ -62,7 +62,7 @@ public class Network extends Graph {
      */
     public ArrayList<Edge> path() {
         ArrayList<Boolean> visited = new ArrayList<Boolean>(nodes.size());
-        for (Integer _ : nodes) {
+        for (Integer i : nodes) {
             visited.add(false);
         }
         return explore(new ArrayList<Edge>(), visited, source, sink);

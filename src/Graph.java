@@ -36,7 +36,7 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 		}
 		
 		this.edges = new ArrayList<Set<Edge>>(nodes.size());
-		for ( Integer _ : nodes )
+		for ( Integer i : nodes )
 		{
 			edges.add(new HashSet<Edge>());
 		}
@@ -112,19 +112,15 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 		return this;
 	}
 	
-	public Graph removeEdge(Edge e)
-	{
-		edges.remove(e);
-		return this;
-	}
-	
 	public Graph removeEdge(Integer nodeU, Integer nodeV)
 	{
+		Set<Edge> toRemove = new HashSet<Edge>(1);
 		for ( Edge e : edges.get(nodeU) )
 			if ( e.destination() == nodeV )
 			{
-				edges.remove(e);
+				toRemove.add(e);
 			}
+		edges.get(nodeU).removeAll(toRemove);
 		return this;
 	}
 

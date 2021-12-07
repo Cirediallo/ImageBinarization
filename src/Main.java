@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -54,7 +57,6 @@ public class Main {
 					int bNode = tNode + m;
 					r.addEdge(tNode, bNode, c);
 					r.addEdge(bNode, tNode, c);
-					System.out.println(c);
 				}
 		}
 		return r;
@@ -63,8 +65,56 @@ public class Main {
 	private static int calculFlotMax(Network r) {
 		int maxFlow = 0;
 		Network residualNetwork = new Network(r);
-		System.out.println(r.path());
-		return 0;
+		ArrayList<Edge> simplePath;
+		while (true) {
+			// Find a path from source to sink...
+			simplePath = residualNetwork.path();
+			if (simplePath == null)
+				break;
+			// ...stop if there is no path anymore
+
+			// Find minimal capacity as capacity of this path
+			Integer pathCapacity = Integer.MAX_VALUE;
+			for (Edge e : simplePath)
+				if (e.capacity() < pathCapacity)
+					pathCapacity = e.capacity();
+
+			// Now we go through this path.
+			Integer currentNode = residualNetwork.source();
+			for (Edge e : simplePath) {
+				System.out.print(currentNode + " ");
+
+				// 1. Updating the residual network
+				if (e.capacity() == pathCapacity) {
+					residualNetwork.removeEdge(currentNode, e.destination());
+				} else
+					e.capacity(e.capacity() - pathCapacity);
+
+				Edge reverseEdge = residualNetwork.getEdge(e.destination(), currentNode);
+				if (reverseEdge == null)
+					residualNetwork.addEdge(e.destination(), currentNode, pathCapacity);
+				else
+					reverseEdge.capacity(reverseEdge.capacity() + pathCapacity);
+
+				// 2. Updating the actual flow
+				Edge actualEdge = r.getEdge(currentNode, e.destination());
+				if (actualEdge == null) {
+					actualEdge = r.getEdge(e.destination(), currentNode);
+					actualEdge.flow(actualEdge.flow() - pathCapacity);
+				} else {
+					actualEdge.flow(actualEdge.flow() + pathCapacity);
+				}
+
+				// Updating the current node before moving forward
+				currentNode = e.destination();
+			}
+			System.out.println();
+		}
+
+		for (Edge e : r.edges().get(r.source()))
+			maxFlow += e.flow();
+
+		return maxFlow;
 	}
 
 	/**
@@ -78,5 +128,6 @@ public class Main {
 		String inputFileName = br.readLine();
 		Network r = constructionReseau(inputFileName);
 		int maxFlow = calculFlotMax(r);
+		System.out.print(maxFlow);
 	}
 }
