@@ -2,13 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.*;
 
-/**
- * @author Mamadou
- *
- */
-
-
-public /* abstract */ class Graph /* implements GraphInterface */ {
+public class Graph {
 	protected Set<Integer> nodes;
 	protected ArrayList<Set<Edge>> edges;	
 	

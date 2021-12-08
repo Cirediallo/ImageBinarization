@@ -6,21 +6,11 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-/**
- * 
- */
-
-/**
- * @author Mamadou
- *
- */
 public class Main {
 	private static Network constructionReseau(String inputFileName) throws IOException {
 		Integer n, m;
@@ -69,7 +59,7 @@ public class Main {
 	/**
 	 * Executes Ford-Fulkerson algorithm on an “empty” network `r`
 	 * 
-	 * @param r Network to fullfill. It must be empty.
+	 * @param r Network to fill. It must be empty.
 	 * @return Maximum flow
 	 */
 	private static int calculFlotMax(Network r) {
@@ -126,9 +116,7 @@ public class Main {
 			}
 		}
 
-		for (
-
-		Edge e : r.edges().get(r.source()))
+		for (Edge e : r.edges().get(r.source()))
 			maxFlow += e.flow();
 
 		return maxFlow;
@@ -138,7 +126,7 @@ public class Main {
 	 * Deepfirst research to find the set of nodes that are accessible
 	 * from the one specified in the residual network associated to `n`.
 	 * 
-	 * @param n       The fullfilled network
+	 * @param n       The filled network
 	 * @param set     A set to complete
 	 * @param visited A functionnal array telling the visitedness of each node
 	 * @param than    The node to search from
@@ -159,31 +147,47 @@ public class Main {
 	}
 
 	/**
-	 * Calculates a minimal cut in a network `r`
+	 * Calculates a minimal cut in a _filled_ network `r`
 	 * 
-	 * @param r The network to cut
+	 * @param r The filled network to cut
 	 * @return A couple of sets of nodes
 	 */
 	private static List<Set<Integer>> calculCoupeMin(Network r) {
-		calculFlotMax(r); // fullfills the network
 		Set<Integer> A = findSameSet(r, new HashSet<Integer>(), r.source());
 		Set<Integer> B = new HashSet<Integer>(r.nodes());
 		B.removeAll(A);
 		return Arrays.asList(A, B);
 	}
 
+	private static List<Set<Integer>> résoudreBinIm(String inputFileName) throws IOException {
+		Network r = constructionReseau(inputFileName);
+		int maxFlow = calculFlotMax(r); // fills the associated network
+		System.out.println("Maximal flow: " + maxFlow);
+		List<Set<Integer>> cut = calculCoupeMin(r);
+		cut.get(0).remove(r.source());
+		cut.get(1).remove(r.sink());
+		System.out.println("Foreground: " + cut.get(0));
+		System.out.println("Background: " + cut.get(1));
+		return cut;
+	}
+
 	/**
 	 * @param args Nothing
 	 */
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = null;
-		System.out.print("Enter file name: ");
-		Reader isr = new InputStreamReader(System.in);
-		br = new BufferedReader(isr);
-		String inputFileName = br.readLine();
-		Network r = constructionReseau(inputFileName);
-		List<Set<Integer>> cut = calculCoupeMin(r);
-		System.out.println("Foreground: " + cut.get(0));
-		System.out.println("Background: " + cut.get(1));
+		// 1. Get file name
+		String inputFileName;
+		if (args.length != 0) {
+			inputFileName = args[0];
+		} else {
+			BufferedReader br = null;
+			System.out.print("Enter file name: ");
+			Reader isr = new InputStreamReader(System.in);
+			br = new BufferedReader(isr);
+			inputFileName = br.readLine();
+		}
+
+		// 2. Answer the question
+		résoudreBinIm(inputFileName);
 	}
 }
