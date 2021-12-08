@@ -5,7 +5,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -63,6 +66,12 @@ public class Main {
 		return r;
 	}
 
+	/**
+	 * Executes Ford-Fulkerson algorithm on an “empty” network `r`
+	 * 
+	 * @param r Network to fullfill. It must be empty.
+	 * @return Maximum flow
+	 */
 	private static int calculFlotMax(Network r) {
 		int maxFlow = 0;
 		Network residualNetwork = new Network(r);
@@ -126,6 +135,44 @@ public class Main {
 	}
 
 	/**
+	 * Deepfirst research to find the set of nodes that are accessible
+	 * from the one specified in the residual network associated to `n`.
+	 * 
+	 * @param n       The fullfilled network
+	 * @param set     A set to complete
+	 * @param visited A functionnal array telling the visitedness of each node
+	 * @param than    The node to search from
+	 * @return A set of nodes accessible in the residual network
+	 */
+	private static HashSet<Integer> findSameSet(Network n, HashSet<Integer> set,
+			Integer than) {
+		set.add(than);
+		for (Edge succession : n.edges().get(than)) {
+			Integer successor = succession.destination();
+			if (succession.flow() == succession.capacity())
+				continue;
+			if (!set.contains(successor)) {
+				findSameSet(n, set, successor);
+			}
+		}
+		return set;
+	}
+
+	/**
+	 * Calculates a minimal cut in a network `r`
+	 * 
+	 * @param r The network to cut
+	 * @return A couple of sets of nodes
+	 */
+	private static List<Set<Integer>> calculCoupeMin(Network r) {
+		calculFlotMax(r); // fullfills the network
+		Set<Integer> A = findSameSet(r, new HashSet<Integer>(), r.source());
+		Set<Integer> B = new HashSet<Integer>(r.nodes());
+		B.removeAll(A);
+		return Arrays.asList(A, B);
+	}
+
+	/**
 	 * @param args Nothing
 	 */
 	public static void main(String[] args) throws IOException {
@@ -135,14 +182,8 @@ public class Main {
 		br = new BufferedReader(isr);
 		String inputFileName = br.readLine();
 		Network r = constructionReseau(inputFileName);
-		int maxFlow = calculFlotMax(r);
-		System.out.print(maxFlow);
-		for (Set<Edge> edges : r.edges()) {
-			for (Edge edge : edges) {
-				if (edge.flow() < 0) {
-					System.out.println("Problème, " + edge);
-				}
-			}
-		}
+		List<Set<Integer>> cut = calculCoupeMin(r);
+		System.out.println("Foreground: " + cut.get(0));
+		System.out.println("Background: " + cut.get(1));
 	}
 }

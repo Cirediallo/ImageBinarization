@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Network extends Graph {
     private int capacity;
@@ -40,7 +41,7 @@ public class Network extends Graph {
      * @param to      The desired destination
      * @return A path from `from` to `to`, if it exists
      */
-    private ArrayList<Edge> explore(ArrayList<Edge> path, ArrayList<Boolean> visited, Integer from, Integer to) {
+    private ArrayList<Edge> findPath(ArrayList<Edge> path, ArrayList<Boolean> visited, Integer from, Integer to) {
         visited.set(from, true);
         for (Edge succession : edges.get(from)) {
             Integer successor = succession.destination();
@@ -51,7 +52,7 @@ public class Network extends Graph {
             if (!visited.get(succession.destination())) {
                 ArrayList<Edge> newPath = new ArrayList<>(path);
                 newPath.add(succession);
-                ArrayList<Edge> attempt = explore(newPath, visited, successor, to);
+                ArrayList<Edge> attempt = findPath(newPath, visited, successor, to);
                 if (attempt != null)
                     return attempt;
             }
@@ -67,6 +68,6 @@ public class Network extends Graph {
         for (Integer i : nodes) {
             visited.add(false);
         }
-        return explore(new ArrayList<Edge>(), visited, source, sink);
+        return findPath(new ArrayList<Edge>(), visited, source, sink);
     }
 }

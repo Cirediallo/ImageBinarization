@@ -10,12 +10,7 @@ import java.util.*;
 
 public /* abstract */ class Graph /* implements GraphInterface */ {
 	protected Set<Integer> nodes;
-	protected ArrayList<Set<Edge>> edges;
-	
-	protected Boolean directed;
-	protected Boolean weighted;
-	
-	protected Integer maxflow;
+	protected ArrayList<Set<Edge>> edges;	
 	
 	public Graph()
 	{
@@ -39,20 +34,13 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 		for ( Integer i : nodes )
 		{
 			edges.add(new HashSet<Edge>());
-		}
-		
-		this.directed = this.weighted = false;
-		
-		this.maxflow = 0;
+		}		
 	}
 	
 	public Graph(Graph g)
 	{
-		this.directed = g.directed;
-		this.weighted = g.weighted;
 		this.nodes = g.nodes();
 		this.edges = g.edges();
-		this.maxflow = g.maxflow;
 	}
 	
 	public Set<Integer> nodes()
@@ -135,20 +123,5 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 			if ( e.destination().intValue() == nodeV.intValue() )
 				return e;
 		return null;
-	}
-
-	public Boolean isDirected()
-	{
-		return this.directed;
-	}
-	
-	public Boolean isWeighted()
-	{
-		return this.weighted;
-	}
-	
-	public Integer maxflow()
-	{
-		return this.maxflow;
 	}
 }
