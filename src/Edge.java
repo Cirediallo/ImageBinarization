@@ -43,7 +43,7 @@ public class Edge {
 		return this.destination;
 	}
 	
-	public Integer capacity()
+	public int capacity()
 	{
 		return this.capacity;
 	}

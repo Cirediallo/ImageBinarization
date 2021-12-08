@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * 
@@ -82,8 +83,6 @@ public class Main {
 			// Now we go through this path.
 			Integer currentNode = residualNetwork.source();
 			for (Edge e : simplePath) {
-				System.out.print(currentNode + " ");
-
 				// 1. Updating the residual network
 				if (e.capacity() == pathCapacity) {
 					residualNetwork.removeEdge(currentNode, e.destination());
@@ -97,21 +96,30 @@ public class Main {
 					reverseEdge.capacity(reverseEdge.capacity() + pathCapacity);
 
 				// 2. Updating the actual flow
-				Edge actualEdge = r.getEdge(currentNode, e.destination());
+				Edge actualEdge = r.getEdge(currentNode, e.destination()),
+						actualReverseEdge = r.getEdge(e.destination(), currentNode);
+				if (actualEdge == null && actualReverseEdge == null) {
+					System.out.println("Y a problème " + currentNode + " " + e.destination());
+				}
 				if (actualEdge == null) {
-					actualEdge = r.getEdge(e.destination(), currentNode);
-					actualEdge.flow(actualEdge.flow() - pathCapacity);
-				} else {
+					actualReverseEdge.flow(actualReverseEdge.flow() - pathCapacity);
+				} else if (actualReverseEdge == null) {
 					actualEdge.flow(actualEdge.flow() + pathCapacity);
+				} else if (actualReverseEdge.flow() >= pathCapacity) {
+					actualReverseEdge.flow(actualReverseEdge.flow() - pathCapacity);
+				} else {
+					actualEdge.flow(actualEdge.flow() + pathCapacity - actualReverseEdge.flow());
+					actualReverseEdge.flow(0);
 				}
 
 				// Updating the current node before moving forward
 				currentNode = e.destination();
 			}
-			System.out.println();
 		}
 
-		for (Edge e : r.edges().get(r.source()))
+		for (
+
+		Edge e : r.edges().get(r.source()))
 			maxFlow += e.flow();
 
 		return maxFlow;
@@ -129,5 +137,12 @@ public class Main {
 		Network r = constructionReseau(inputFileName);
 		int maxFlow = calculFlotMax(r);
 		System.out.print(maxFlow);
+		for (Set<Edge> edges : r.edges()) {
+			for (Edge edge : edges) {
+				if (edge.flow() < 0) {
+					System.out.println("Problème, " + edge);
+				}
+			}
+		}
 	}
 }

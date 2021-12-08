@@ -116,7 +116,7 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 	{
 		Set<Edge> toRemove = new HashSet<Edge>(1);
 		for ( Edge e : edges.get(nodeU) )
-			if ( e.destination() == nodeV )
+			if ( e.destination().intValue() == nodeV.intValue() )
 			{
 				toRemove.add(e);
 			}
@@ -132,7 +132,7 @@ public /* abstract */ class Graph /* implements GraphInterface */ {
 	public Edge getEdge(Integer nodeU, Integer nodeV)
 	{
 		for ( Edge e : edges.get(nodeU) )
-			if ( e.destination() == nodeV )
+			if ( e.destination().intValue() == nodeV.intValue() )
 				return e;
 		return null;
 	}

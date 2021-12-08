@@ -44,14 +44,16 @@ public class Network extends Graph {
         visited.set(from, true);
         for (Edge succession : edges.get(from)) {
             Integer successor = succession.destination();
-            if (successor == to) {
+            if (successor.intValue() == to.intValue()) {
                 path.add(succession);
                 return path;
             }
             if (!visited.get(succession.destination())) {
                 ArrayList<Edge> newPath = new ArrayList<>(path);
                 newPath.add(succession);
-                return explore(newPath, visited, successor, to);
+                ArrayList<Edge> attempt = explore(newPath, visited, successor, to);
+                if (attempt != null)
+                    return attempt;
             }
         }
         return null;
