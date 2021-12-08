@@ -12,8 +12,10 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
+	static int n, // height
+			m; // width
+
 	private static Network constructionReseau(String inputFileName) throws IOException {
-		Integer n, m;
 		Network r;
 		try (Scanner scanner = new Scanner(Files.newInputStream(new File(inputFileName).toPath()))) {
 			n = scanner.nextInt(); // Height
@@ -161,13 +163,20 @@ public class Main {
 
 	private static List<Set<Integer>> résoudreBinIm(String inputFileName) throws IOException {
 		Network r = constructionReseau(inputFileName);
-		int maxFlow = calculFlotMax(r); // fills the associated network
-		System.out.println("Maximal flow: " + maxFlow);
+		calculFlotMax(r); // fills the associated network
 		List<Set<Integer>> cut = calculCoupeMin(r);
 		cut.get(0).remove(r.source());
 		cut.get(1).remove(r.sink());
-		System.out.println("Foreground: " + cut.get(0));
-		System.out.println("Background: " + cut.get(1));
+
+		for (Integer pixel = 0; pixel < r.nodes().size(); pixel++) {
+			if (pixel % m == 0)
+				System.out.println();
+			if (cut.get(0).contains(pixel))
+				System.out.print("A");
+			else if (cut.get(1).contains(pixel))
+				System.out.print("B");
+		}
+
 		return cut;
 	}
 
