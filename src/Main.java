@@ -163,7 +163,8 @@ public class Main {
 
 	private static List<Set<Integer>> résoudreBinIm(String inputFileName) throws IOException {
 		Network r = constructionReseau(inputFileName);
-		calculFlotMax(r); // fills the associated network
+		int maxFlow = calculFlotMax(r); // fills the associated network
+		System.out.println("Maximal flow: " + maxFlow);
 		List<Set<Integer>> cut = calculCoupeMin(r);
 		cut.get(0).remove(r.source());
 		cut.get(1).remove(r.sink());
