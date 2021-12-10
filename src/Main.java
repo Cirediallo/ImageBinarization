@@ -66,11 +66,10 @@ public class Main {
 	 */
 	private static int calculFlotMax(Network r) {
 		int maxFlow = 0;
-		Network residualNetwork = new Network(r);
 		ArrayList<Edge> simplePath;
 		while (true) {
 			// Find a path from source to sink...
-			simplePath = residualNetwork.path();
+			simplePath = r.path();
 			if (simplePath == null)
 				break;
 			// ...stop if there is no path anymore
@@ -78,39 +77,23 @@ public class Main {
 			// Find minimal capacity as capacity of this path
 			Integer pathCapacity = Integer.MAX_VALUE;
 			for (Edge e : simplePath)
-				if (e.capacity() < pathCapacity)
-					pathCapacity = e.capacity();
+				if (e.capacity() - e.flow() < pathCapacity)
+					pathCapacity = e.capacity() - e.flow();
 
 			// Now we go through this path.
-			Integer currentNode = residualNetwork.source();
+			Integer currentNode = r.source();
 			for (Edge e : simplePath) {
-				// 1. Updating the residual network
-				if (e.capacity() == pathCapacity) {
-					residualNetwork.removeEdge(currentNode, e.destination());
-				} else
-					e.capacity(e.capacity() - pathCapacity);
-
-				Edge reverseEdge = residualNetwork.getEdge(e.destination(), currentNode);
-				if (reverseEdge == null)
-					residualNetwork.addEdge(e.destination(), currentNode, pathCapacity);
-				else
-					reverseEdge.capacity(reverseEdge.capacity() + pathCapacity);
-
-				// 2. Updating the actual flow
-				Edge actualEdge = r.getEdge(currentNode, e.destination()),
-						actualReverseEdge = r.getEdge(e.destination(), currentNode);
-				if (actualEdge == null && actualReverseEdge == null) {
-					System.out.println("Y a problème " + currentNode + " " + e.destination());
-				}
-				if (actualEdge == null) {
-					actualReverseEdge.flow(actualReverseEdge.flow() - pathCapacity);
-				} else if (actualReverseEdge == null) {
-					actualEdge.flow(actualEdge.flow() + pathCapacity);
-				} else if (actualReverseEdge.flow() >= pathCapacity) {
-					actualReverseEdge.flow(actualReverseEdge.flow() - pathCapacity);
+				Edge currentEdge = r.getEdge(currentNode, e.destination()),
+						reversedEdge = r.getEdge(e.destination(), currentNode);
+				if (currentEdge == null) {
+					reversedEdge.flow(reversedEdge.flow() - pathCapacity);
+				} else if (reversedEdge == null) {
+					currentEdge.flow(currentEdge.flow() + pathCapacity);
+				} else if (reversedEdge.flow() >= pathCapacity) {
+					reversedEdge.flow(reversedEdge.flow() - pathCapacity);
 				} else {
-					actualEdge.flow(actualEdge.flow() + pathCapacity - actualReverseEdge.flow());
-					actualReverseEdge.flow(0);
+					currentEdge.flow(currentEdge.flow() + pathCapacity - reversedEdge.flow());
+					reversedEdge.flow(0);
 				}
 
 				// Updating the current node before moving forward

@@ -40,6 +40,8 @@ public class Network extends Graph {
     private ArrayList<Edge> findPath(ArrayList<Edge> path, ArrayList<Boolean> visited, Integer from, Integer to) {
         visited.set(from, true);
         for (Edge succession : edges.get(from)) {
+            if (succession.flow() == succession.capacity())
+                continue;
             Integer successor = succession.destination();
             if (successor.intValue() == to.intValue()) {
                 path.add(succession);
