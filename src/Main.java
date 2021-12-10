@@ -118,7 +118,7 @@ public class Main {
 			}
 		}
 
-		for (Edge e : r.edges().get(r.source()))
+		for (Edge e : r.edges.get(r.source()))
 			maxFlow += e.flow();
 
 		return maxFlow;
@@ -137,7 +137,7 @@ public class Main {
 	private static HashSet<Integer> findSameSet(Network n, HashSet<Integer> set,
 			Integer than) {
 		set.add(than);
-		for (Edge succession : n.edges().get(than)) {
+		for (Edge succession : n.edges.get(than)) {
 			Integer successor = succession.destination();
 			if (succession.flow() == succession.capacity())
 				continue;
@@ -156,25 +156,26 @@ public class Main {
 	 */
 	private static List<Set<Integer>> calculCoupeMin(Network r) {
 		Set<Integer> A = findSameSet(r, new HashSet<Integer>(), r.source());
-		Set<Integer> B = new HashSet<Integer>(r.nodes());
+		Set<Integer> B = new HashSet<Integer>(r.nodes);
 		B.removeAll(A);
 		return Arrays.asList(A, B);
 	}
 
 	private static List<Set<Integer>> résoudreBinIm(String inputFileName) throws IOException {
 		Network r = constructionReseau(inputFileName);
+		System.out.println("Network built");
 		int maxFlow = calculFlotMax(r); // fills the associated network
 		System.out.println("Maximal flow: " + maxFlow);
 		List<Set<Integer>> cut = calculCoupeMin(r);
 		cut.get(0).remove(r.source());
 		cut.get(1).remove(r.sink());
 
-		for (Integer pixel = 0; pixel < r.nodes().size(); pixel++) {
+		for (Integer pixel = 0; pixel < r.nodes.size() - 2; pixel++) {
 			if (pixel % m == 0)
 				System.out.println();
 			if (cut.get(0).contains(pixel))
 				System.out.print("A");
-			else if (cut.get(1).contains(pixel))
+			else
 				System.out.print("B");
 		}
 

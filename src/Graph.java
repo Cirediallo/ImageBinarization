@@ -15,7 +15,7 @@ public class Graph {
 	{
 		if( n < 0 )
 		{
-			throw new IllegalArgumentException("number of nodes `n` can not be negative");
+			throw new IllegalArgumentException("number of nodes `n` cannot be negative");
 		}
 		
 		this.nodes = new HashSet<Integer>();

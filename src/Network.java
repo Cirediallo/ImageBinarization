@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class Network extends Graph {
-    private int capacity;
     private Integer source, sink;
 
     /**
@@ -11,14 +10,12 @@ public class Network extends Graph {
      */
     public Network(Integer n) {
         super(n + 2);
-        capacity = 0;
         source = n;
         sink = n + 1;
     }
 
     public Network(Network n) {
         super(n);
-        capacity = n.capacity;
         source = n.source;
         sink = n.sink;
     }
